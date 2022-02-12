@@ -5,7 +5,6 @@
     },
     "extends": [
         "eslint:recommended",
-        "plugin:react/recommended",
         "plugin:@typescript-eslint/recommended"
     ],
     "parser": "@typescript-eslint/parser",
@@ -14,13 +13,61 @@
             "jsx": true
         },
         "ecmaVersion": "latest",
-        "sourceType": "module"
+        "sourceType": "module",
+        "warnOnUnsupportedTypeScriptVersion": false
     },
     "plugins": [
         "react",
-        "@typescript-eslint"
+        "@typescript-eslint",
+        "import",
+        "sort-keys-fix"
+    ],
+    "ignorePatterns": [
+        "__tests__/*",
+        "jest.config.js",
+        "babel.config.js",
+        "next.config.js",
+        "additional.d.ts"
     ],
     "rules": {
-        
+        "quotes": [
+            "error",
+            "single",
+            {
+                "allowTemplateLiterals": true
+            }
+        ],
+        "jsx-quotes": [
+            "error",
+            "prefer-double"
+        ],
+        "semi": [
+            "error",
+            "always"
+        ],
+        "max-len": [
+            "error",
+            {
+                "code": 140
+            }
+        ],
+        "no-console": "error",
+        "no-alert": "error",
+        "no-var": "error",
+        "space-before-blocks": "error",
+        "no-shadow": "error",
+        "arrow-spacing": "error",
+        "key-spacing": [
+            "error",
+            {
+                "beforeColon": false
+            }
+        ],
+        "import/no-duplicates": "error",
+        "sort-keys": "error",
+        "newline-before-return": "error",
+        "react/react-in-jsx-scope": "off",
+        "@typescript-eslint/explicit-module-boundary-types": "off",
+        "sort-keys-fix/sort-keys-fix": "warn"
     }
 }
