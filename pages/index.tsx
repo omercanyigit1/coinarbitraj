@@ -1,6 +1,5 @@
-import { useState } from 'react';
 import type { NextPage } from 'next';
-import { Table, Radio, Divider } from 'antd';
+import { Table, Divider } from 'antd';
 
 const columns = [
   {
