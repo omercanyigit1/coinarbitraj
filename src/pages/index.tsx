@@ -1,20 +1,20 @@
 import { useState } from 'react';
-import type { NextPage } from 'next'
+import type { NextPage } from 'next';
 import { Table, Radio, Divider } from 'antd';
 
 const columns = [
   {
-    title: 'Name',
     dataIndex: 'name',
     render: (text: string) => <a>{text}</a>,
+    title: 'Name',
   },
   {
-    title: 'Age',
     dataIndex: 'age',
+    title: 'Age',
   },
   {
-    title: 'Address',
     dataIndex: 'address',
+    title: 'Address',
   },
 ];
 
@@ -27,28 +27,28 @@ interface DataType {
 
 const data: DataType[] = [
   {
+    address: 'New York No. 1 Lake Park',
+    age: 32,
     key: '1',
     name: 'John Brown',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
   },
   {
+    address: 'London No. 1 Lake Park',
+    age: 42,
     key: '2',
     name: 'Jim Green',
-    age: 42,
-    address: 'London No. 1 Lake Park',
   },
   {
+    address: 'Sidney No. 1 Lake Park',
+    age: 32,
     key: '3',
     name: 'Joe Black',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park',
   },
   {
+    address: 'Sidney No. 1 Lake Park',
+    age: 99,
     key: '4',
     name: 'Disabled User',
-    age: 99,
-    address: 'Sidney No. 1 Lake Park',
   },
 ];
 
@@ -75,11 +75,11 @@ const Home: NextPage = () => {
         dataSource={data}
       />
     </div>
-  )
-}
+  );
+};
 
 Home.defaultProps = {
   data: []
-}
+};
 
-export default Home
+export default Home;
