@@ -24,9 +24,7 @@
     ],
     "ignorePatterns": [
         "__tests__/*",
-        "jest.config.js",
-        "babel.config.js",
-        "next.config.js",
+        "*.config.js",
         "additional.d.ts"
     ],
     "rules": {

@@ -1,5 +1,9 @@
 import type { NextPage } from 'next';
-import { Table, Divider } from 'antd';
+import { Table, Divider, Typography } from 'antd';
+import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
+import { useTranslation } from 'next-i18next';
+
+const { Title } = Typography;
 
 const columns = [
   {
@@ -61,8 +65,12 @@ const rowSelection = {
 
 const Home: NextPage = () => {
 
+  const {t, i18n} = useTranslation();
+
   return (
     <div>
+      <Title level={2}>{t('home:title')}</Title>
+
       <Divider />
 
       <Table
@@ -82,3 +90,12 @@ Home.defaultProps = {
 };
 
 export default Home;
+
+export async function getStaticProps({ locale }) {
+  return {
+    props: {
+      ...(await serverSideTranslations(locale, ['home'])),
+      // Will be passed to the page component as props
+    },
+  };
+}
