@@ -1,7 +1,7 @@
-import type { NextPage } from 'next';
 import { Table, Divider, Typography } from 'antd';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'next-i18next';
+import { getSession, signOut } from 'next-auth/react';
 
 const { Title } = Typography;
 
@@ -63,14 +63,23 @@ const rowSelection = {
   }),
 };
 
-const Home: NextPage = () => {
+const Home = ({ sessionObj }) => {
+
+  // eslint-disable-next-line no-console
+  console.log('sessionObj', sessionObj);
 
   const { t } = useTranslation();
-
 
   return (
     <div>
       <Title level={2}>{t('home:title')}</Title>
+
+      {
+        sessionObj && <>
+          Signed in as {sessionObj.user.email} <br />
+          <button onClick={() => signOut()}>Sign out</button>
+        </>
+      }
 
       <Divider />
 
@@ -92,11 +101,22 @@ Home.defaultProps = {
 
 export default Home;
 
-export async function getStaticProps({ locale }) {
+export async function getServerSideProps({ locale, ...ctx }) {
+  const session = await getSession(ctx);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: '/auth/login',
+        permanent: false,
+      },
+    };
+  }
+
   return {
     props: {
       ...(await serverSideTranslations(locale, ['home'])),
-      // Will be passed to the page component as props
+      sessionObj: session
     },
   };
 }

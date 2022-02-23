@@ -25,7 +25,8 @@
     "ignorePatterns": [
         "__tests__/*",
         "*.config.js",
-        "additional.d.ts"
+        "additional.d.ts",
+        "*...nextauth*"
     ],
     "rules": {
         "quotes": [
