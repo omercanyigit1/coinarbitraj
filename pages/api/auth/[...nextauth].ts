@@ -1,11 +1,16 @@
+import { UserService } from '@/services';
 import NextAuth from 'next-auth';
 import CredentialsProvider from 'next-auth/providers/credentials';
 
+const SECRET_KEY = process.env.NEXTAUTH_SECRET;
+
 export default NextAuth({
     session: {
-        maxAge: 60 * 60 * 24 * 30 // 60sn * 60dk * 24 sa(1 gün) * gün sayısı // 
+        strategy: 'jwt',
+
+        // maxAge: 60 * 60 * 24 * 30 // 60sn * 60dk * 24 sa(1 gün) * gün sayısı // 
     },
-    secret: process.env.NEXTAUTH_SECRET,
+    secret: SECRET_KEY,
     // Configure one or more authentication providers
     providers: [
         CredentialsProvider({
@@ -13,12 +18,27 @@ export default NextAuth({
             name: "Credentials",
             credentials: undefined,
             async authorize(credentials, req) {
-                // Add logic here to look up the user from the credentials supplied
-                const user = { id: credentials.id, name: credentials.name, email: credentials.email };
+                let response;
 
-                if (user) {
+                if (credentials.isNewUser) {
+                    response = await UserService.register({
+                        email: credentials.email,
+                        password: credentials.password,
+                        name: credentials.name,
+                        surname: credentials.surname
+                    });
+                } else {
+                    response = await UserService.login({
+                        email: credentials.email,
+                        password: credentials.password
+                    });
+                }
+
+                console.log('authorize-response', response);
+
+                if (response.success) {
                     // Any object returned will be saved in `user` property of the JWT
-                    return user;
+                    return { email: credentials.email, password: credentials.password };
                 } else {
                     // If you return null then an error will be displayed advising the user to check their details.
                     return null;
@@ -30,11 +50,19 @@ export default NextAuth({
     ],
     pages: {
         signIn: '/auth/login',
+        newUser: '/auth/register',
         error: '/auth/error',
     },
     callbacks: {
-        async session({ session }) {
+        async session({ session, token, user }) {
+            // console.log('sessionnnn', { session, token, user });
+
             return session;
+        },
+        async jwt({ token, user, account, profile, isNewUser }) {
+            // console.log('jwttt', { token, user, account, profile, isNewUser });
+
+            return token;
         }
     }
 });

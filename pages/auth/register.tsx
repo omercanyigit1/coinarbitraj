@@ -3,29 +3,29 @@ import { signIn, getProviders, getCsrfToken, getSession, LiteralUnion, ClientSaf
 import { Form, Input, Button, message } from 'antd';
 import { useRouter } from 'next/router';
 
-type LoginPageProps = {
+type RegisterPageProps = {
     providers: Record<LiteralUnion<BuiltInProviderType, string>, ClientSafeProvider>;
     csrfToken: string;
 }
 
-export default function LoginPage({ providers, csrfToken }: LoginPageProps) {
+export default function RegisterPage({ providers, csrfToken }: RegisterPageProps) {
     const router = useRouter();
 
     const onFinish = async (values: any) => {
-        const { email, password } = values;
+        const { email, password, name, surname } = values;
 
-        const user = { email, password };
+        const user = { email, isNewUser: true, name, password, surname  };
 
         const response = await signIn(providers.credentials.id, { redirect: false, ...user });
 
         if (response.ok && !response.error) {
-            message.success('Login başarılı');
+            message.success('Register başarılı');
 
             router.push('/');
         }
 
-        if (response.error) {
-            message.error('Kullanıcı adı veya şifre hatalı');
+        if (response.ok && response.error) {
+            message.error(response.error);
         }
     };
 
@@ -35,15 +35,6 @@ export default function LoginPage({ providers, csrfToken }: LoginPageProps) {
     };
 
     return (
-        // <>
-        //     Not signed in <br />
-        //     <input type="hidden" name="csrfToken" defaultValue={csrfToken} />
-
-        //     <button type="submit" onClick={handleSubmit}
-        //         style={{ background: `gray`, color: `white` }}>
-        //         Sign in with {providers.credentials.name}
-        //     </button>
-        // </>
         <Form
             name="basic"
             labelCol={{ span: 4 }}
@@ -54,6 +45,22 @@ export default function LoginPage({ providers, csrfToken }: LoginPageProps) {
             autoComplete="off"
         >
             <Input type="hidden" name="csrfToken" defaultValue={csrfToken} />
+
+            <Form.Item
+                label="Name"
+                name="name"
+                rules={[{ message: 'Please input your name!', required: true }]}
+            >
+                <Input />
+            </Form.Item>
+
+            <Form.Item
+                label="Surname"
+                name="surname"
+                rules={[{ message: 'Please input your surname!', required: true }]}
+            >
+                <Input />
+            </Form.Item>
 
             <Form.Item
                 label="E-mail"

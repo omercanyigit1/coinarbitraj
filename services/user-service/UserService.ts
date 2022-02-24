@@ -1,13 +1,36 @@
 import Http from '@/core/http';
+import { FailedResponse, SuccessResponse, UserLoginRequest, UserLoginResponse, UserRegisterRequest, UserRegisterResponse } from '@/models';
 import { IUserService, UserEndpoints } from '@/services';
 
 const UserService: IUserService = {
-    login: (): Promise<unknown> => {
-        return Promise.resolve(Http.post(UserEndpoints.Login, { email: '', password: '' }));
+    login: async (userLoginRequest: UserLoginRequest) => {
+        try {
+            const { data } = await Http.post(UserEndpoints.Login, { ...userLoginRequest });
+
+            const response = new SuccessResponse<UserLoginResponse>(data);
+
+            return Promise.resolve(response);
+
+        } catch (err) {
+            const response = new FailedResponse<UserLoginResponse>(err.code, err.message);
+
+            return Promise.resolve(response);
+        }
     },
 
-    register: (): Promise<unknown> => {
-        return Promise.resolve(Http.post(UserEndpoints.Login, { email: '', name: '', password: '', surname: '' }));
+    register: async (userRegisterRequest: UserRegisterRequest) => {
+        try {
+            const { data } = await Http.post(UserEndpoints.Register, { ...userRegisterRequest });
+
+            const response = new SuccessResponse<UserRegisterResponse>(data);
+
+            return Promise.resolve(response);
+
+        } catch (err) {
+            const response = new FailedResponse<UserRegisterResponse>(err.code, err.message);
+
+            return Promise.resolve(response);
+        }
     }
 };
 

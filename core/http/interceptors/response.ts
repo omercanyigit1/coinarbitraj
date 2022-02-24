@@ -2,8 +2,6 @@ import { AxiosResponse } from 'axios';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export function response(resp: AxiosResponse<any>): Promise<AxiosResponse<any>> {
-    // eslint-disable-next-line no-console
-    console.log('interceptor response', response);
 
     const cond = true;
 
@@ -16,6 +14,6 @@ export function response(resp: AxiosResponse<any>): Promise<AxiosResponse<any>> 
             resolve(resp);
         }
 
-        reject(response);
+        reject(resp);
     });
 }
