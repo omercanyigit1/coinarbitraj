@@ -1,30 +1,22 @@
-import { BuiltInProviderType } from 'next-auth/providers';
-import { signIn, getProviders, getCsrfToken, getSession, LiteralUnion, ClientSafeProvider } from 'next-auth/react';
+import { userActions } from '@/redux/actions';
+import { useAppDispatch } from '@/redux/store';
+import { getSession } from '@/utils/auth';
 import { Form, Input, Button, message } from 'antd';
 import { useRouter } from 'next/router';
 
-type LoginPageProps = {
-    providers: Record<LiteralUnion<BuiltInProviderType, string>, ClientSafeProvider>;
-    csrfToken: string;
-}
-
-export default function LoginPage({ providers, csrfToken }: LoginPageProps) {
+export default function LoginPage() {
     const router = useRouter();
 
+    const dispatch = useAppDispatch();
+
     const onFinish = async (values: any) => {
-        const { email, password } = values;
+        const response = await dispatch(userActions.loginUser(values));
 
-        const user = { email, password };
+        if (response.meta.requestStatus === 'fulfilled') {
+            message.success('Login başarılı!');
 
-        const response = await signIn(providers.credentials.id, { redirect: false, ...user });
-
-        if (response.ok && !response.error) {
-            message.success('Login başarılı');
-
-            router.push('/');
-        }
-
-        if (response.error) {
+            router.replace('/');
+        } else {
             message.error('Kullanıcı adı veya şifre hatalı');
         }
     };
@@ -35,15 +27,6 @@ export default function LoginPage({ providers, csrfToken }: LoginPageProps) {
     };
 
     return (
-        // <>
-        //     Not signed in <br />
-        //     <input type="hidden" name="csrfToken" defaultValue={csrfToken} />
-
-        //     <button type="submit" onClick={handleSubmit}
-        //         style={{ background: `gray`, color: `white` }}>
-        //         Sign in with {providers.credentials.name}
-        //     </button>
-        // </>
         <Form
             name="basic"
             labelCol={{ span: 4 }}
@@ -53,8 +36,6 @@ export default function LoginPage({ providers, csrfToken }: LoginPageProps) {
             onFinishFailed={onFinishFailed}
             autoComplete="off"
         >
-            <Input type="hidden" name="csrfToken" defaultValue={csrfToken} />
-
             <Form.Item
                 label="E-mail"
                 name="email"
@@ -82,9 +63,9 @@ export default function LoginPage({ providers, csrfToken }: LoginPageProps) {
 
 export async function getServerSideProps(ctx) {
 
-    const session = await getSession(ctx);
+    const cookies = getSession(ctx);
 
-    if (session) {
+    if (cookies?.next_auth_coinarbitage_jwt) {
         return {
             redirect: {
                 destination: '/',
@@ -93,13 +74,7 @@ export async function getServerSideProps(ctx) {
         };
     }
 
-    const csrfToken = await getCsrfToken();
-    const providers = await getProviders();
-
     return {
-        props: {
-            csrfToken,
-            providers
-        }
+        props: {}
     };
 }

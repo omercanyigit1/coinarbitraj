@@ -1,3 +1,1 @@
-export type UserRegisterResponse = {
-    token: string;
-}
+export type UserRegisterResponse = string;

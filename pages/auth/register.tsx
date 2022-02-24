@@ -1,31 +1,24 @@
-import { BuiltInProviderType } from 'next-auth/providers';
-import { signIn, getProviders, getCsrfToken, getSession, LiteralUnion, ClientSafeProvider } from 'next-auth/react';
+import { userActions } from '@/redux/actions';
+import { useAppDispatch } from '@/redux/store';
+import { getSession } from '@/utils/auth';
 import { Form, Input, Button, message } from 'antd';
 import { useRouter } from 'next/router';
 
-type RegisterPageProps = {
-    providers: Record<LiteralUnion<BuiltInProviderType, string>, ClientSafeProvider>;
-    csrfToken: string;
-}
+export default function RegisterPage() {
 
-export default function RegisterPage({ providers, csrfToken }: RegisterPageProps) {
     const router = useRouter();
 
+    const dispatch = useAppDispatch();
+
     const onFinish = async (values: any) => {
-        const { email, password, name, surname } = values;
+        const response = await dispatch(userActions.registerUser(values));
 
-        const user = { email, isNewUser: true, name, password, surname  };
+        if (response.meta.requestStatus === 'fulfilled') {
+            message.success('Kayıt başarılı!');
 
-        const response = await signIn(providers.credentials.id, { redirect: false, ...user });
-
-        if (response.ok && !response.error) {
-            message.success('Register başarılı');
-
-            router.push('/');
-        }
-
-        if (response.ok && response.error) {
-            message.error(response.error);
+            router.replace('/');
+        } else {
+            message.error('Kayıt yapılırken hata oluştu');
         }
     };
 
@@ -44,8 +37,6 @@ export default function RegisterPage({ providers, csrfToken }: RegisterPageProps
             onFinishFailed={onFinishFailed}
             autoComplete="off"
         >
-            <Input type="hidden" name="csrfToken" defaultValue={csrfToken} />
-
             <Form.Item
                 label="Name"
                 name="name"
@@ -89,9 +80,9 @@ export default function RegisterPage({ providers, csrfToken }: RegisterPageProps
 
 export async function getServerSideProps(ctx) {
 
-    const session = await getSession(ctx);
+    const cookies = getSession(ctx);
 
-    if (session) {
+    if (cookies?.next_auth_coinarbitage_jwt) {
         return {
             redirect: {
                 destination: '/',
@@ -100,13 +91,7 @@ export async function getServerSideProps(ctx) {
         };
     }
 
-    const csrfToken = await getCsrfToken();
-    const providers = await getProviders();
-
     return {
-        props: {
-            csrfToken,
-            providers
-        }
+        props: {}
     };
 }

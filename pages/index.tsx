@@ -1,7 +1,9 @@
 import { Table, Divider, Typography } from 'antd';
 import { serverSideTranslations } from 'next-i18next/serverSideTranslations';
 import { useTranslation } from 'next-i18next';
-import { getSession, signOut } from 'next-auth/react';
+import { useAppSelector } from '@/redux/store';
+import { useEffect } from 'react';
+import { CoinListService } from '@/services';
 
 const { Title } = Typography;
 
@@ -63,23 +65,26 @@ const rowSelection = {
   }),
 };
 
-const Home = ({ sessionObj }) => {
+const Home = () => {
 
-  // eslint-disable-next-line no-console
-  console.log('sessionObj', sessionObj);
+  const userState = useAppSelector((state) => state.user);
+
+  useEffect(() => {
+    // eslint-disable-next-line no-console
+    console.log('userState', userState);
+
+    getCoinList();
+  }, []);
+
+  const getCoinList = async () => {
+    await CoinListService.coinList();
+  };
 
   const { t } = useTranslation();
 
   return (
     <div>
-      <Title level={2}>{t('home:title')}</Title>
-
-      {
-        sessionObj && <>
-          Signed in as {sessionObj.user.email} <br />
-          <button onClick={() => signOut()}>Sign out</button>
-        </>
-      }
+      {/* <Title level={2}>{t('home:title')}</Title> */}
 
       <Divider />
 
@@ -101,22 +106,21 @@ Home.defaultProps = {
 
 export default Home;
 
-export async function getServerSideProps({ locale, ...ctx }) {
-  const session = await getSession(ctx);
+export async function getServerSideProps({ locale }) {
+  // const session = await getSession(ctx);
 
-  if (!session) {
-    return {
-      redirect: {
-        destination: '/auth/login',
-        permanent: false,
-      },
-    };
-  }
+  // if (!session) {
+  //   return {
+  //     redirect: {
+  //       destination: '/auth/login',
+  //       permanent: false,
+  //     },
+  //   };
+  // }
 
   return {
     props: {
       ...(await serverSideTranslations(locale, ['home'])),
-      sessionObj: session
     },
   };
 }
