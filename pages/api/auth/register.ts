@@ -1,4 +1,3 @@
-/* eslint-disable import/no-anonymous-default-export */
 import { UserService } from '@/services';
 import { serialize } from 'cookie';
 

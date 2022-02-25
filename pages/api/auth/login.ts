@@ -1,4 +1,3 @@
-/* eslint-disable import/no-anonymous-default-export */
 import { UserService } from '@/services';
 import { serialize } from 'cookie';
 import { NextApiRequest, NextApiResponse } from 'next';
@@ -13,7 +12,7 @@ export default async function (req: NextApiRequest, res: NextApiResponse) {
 
     if (response.success) {
         const serialised = serialize('next_auth_coinarbitage_jwt', response.data, {
-            httpOnly: false,
+            httpOnly: true,
             path: '/',
             sameSite: 'strict',
             secure: process.env.NODE_ENV !== 'development',

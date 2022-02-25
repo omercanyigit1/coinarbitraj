@@ -4,6 +4,7 @@ import { useTranslation } from 'next-i18next';
 import { useAppSelector } from '@/redux/store';
 import { useEffect } from 'react';
 import { CoinListService } from '@/services';
+import { withAuth } from '@/utils/withAuth';
 
 const { Title } = Typography;
 
@@ -106,21 +107,11 @@ Home.defaultProps = {
 
 export default Home;
 
-export async function getServerSideProps({ locale }) {
-  // const session = await getSession(ctx);
-
-  // if (!session) {
-  //   return {
-  //     redirect: {
-  //       destination: '/auth/login',
-  //       permanent: false,
-  //     },
-  //   };
-  // }
+export const getServerSideProps = withAuth(async ({ locale }) => {
 
   return {
     props: {
       ...(await serverSideTranslations(locale, ['home'])),
     },
   };
-}
+});

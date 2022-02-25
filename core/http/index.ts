@@ -6,7 +6,7 @@ import { response } from '@/core/http/interceptors/response';
 import { RequestConfig } from '@/core/http/types/request-config';
 
 const axiosInstance = axios.create({
-    baseURL: 'https://coinarbitrage.io/api',
+    baseURL: process.env.NEXT_PUBLIC_BASE_API_URL,
     headers: {
         'Accept': 'application/json',
         'Content-Type': 'application/json'

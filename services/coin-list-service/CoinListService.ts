@@ -5,7 +5,7 @@ import { ICoinListService, CoinListEndpoints } from '@/services';
 const CoinListService: ICoinListService = {
     coinList: async () => {
         try {
-            const resp = await Http.get(CoinListEndpoints.CoinList, { oauth: true });
+            const resp = await Http.get(CoinListEndpoints.CoinList, { oauth: true, withCredentials: true });
 
             // eslint-disable-next-line no-console
             console.log('coinList-resp', resp);

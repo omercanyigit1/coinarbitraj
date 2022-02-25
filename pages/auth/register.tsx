@@ -1,6 +1,6 @@
 import { userActions } from '@/redux/actions';
 import { useAppDispatch } from '@/redux/store';
-import { getSession } from '@/utils/auth';
+import { withAuth } from '@/utils/withAuth';
 import { Form, Input, Button, message } from 'antd';
 import { useRouter } from 'next/router';
 
@@ -78,20 +78,9 @@ export default function RegisterPage() {
     );
 }
 
-export async function getServerSideProps(ctx) {
-
-    const cookies = getSession(ctx);
-
-    if (cookies?.next_auth_coinarbitage_jwt) {
-        return {
-            redirect: {
-                destination: '/',
-                permanent: true,
-            },
-        };
-    }
+export const getServerSideProps = withAuth(async () => {
 
     return {
-        props: {}
+        props: {},
     };
-}
+});
