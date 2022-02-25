@@ -1,6 +1,5 @@
 import { userActions } from '@/redux/actions';
 import { useAppDispatch } from '@/redux/store';
-import { withAuth } from '@/utils/withAuth';
 import { Form, Input, Button, message } from 'antd';
 import { useRouter } from 'next/router';
 
@@ -60,10 +59,3 @@ export default function LoginPage() {
         </Form>
     );
 }
-
-export const getServerSideProps = withAuth(async () => {
-
-    return {
-        props: {},
-    };
-});

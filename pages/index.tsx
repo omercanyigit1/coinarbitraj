@@ -4,7 +4,6 @@ import { useTranslation } from 'next-i18next';
 import { useAppSelector } from '@/redux/store';
 import { useEffect } from 'react';
 import { CoinListService } from '@/services';
-import { withAuth } from '@/utils/withAuth';
 
 const { Title } = Typography;
 
@@ -107,11 +106,11 @@ Home.defaultProps = {
 
 export default Home;
 
-export const getServerSideProps = withAuth(async ({ locale }) => {
+export async function getServerSideProps({ locale }) {
 
   return {
     props: {
       ...(await serverSideTranslations(locale, ['home'])),
     },
   };
-});
+}
